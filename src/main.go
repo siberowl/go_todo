@@ -34,41 +34,69 @@ func main() {
 		flag.PrintDefaults()
 	}
 
-	fmt.Println("add:", *addPtr)
-	fmt.Println("remove:", *removePtr)
-
 	if *addPtr != "" {
+		addTodo(db, *addPtr)
+	}
+	if *removePtr != 0 {
 
+	}
+	if *showPtr {
+		showTodo(db)
 	}
 }
 
-func showTodo(db *sql.DB) {
-	// query
-	rows, err := db.Query("SELECT * FROM todo")
-	checkErr(err)
-	var id int
-	var task string
-	var status bool
-	fmt.Println("id, task, status")
-	for rows.Next() {
-		rows.Scan(&id, &task, &status)
-		fmt.Println(string(id) + ", " + task + ", " + strconv.FormatBool(status))
-	}
-	rows.Close()
+type entry struct {
+	id     int
+	task   string
+	status bool
 }
 
-func addTodo(db *sql.DB, task string) {
-	rows, err := db.Query(`SELECT COUNT(*) FROM todo`)
-	checkErr(err)
+func getEntries(db *sql.DB) []entry {
+	rows, err := db.Query("SELECT COUNT(*) FROM todo")
 	var count int
 	for rows.Next() {
 		rows.Scan(&count)
 	}
 	rows.Close()
-	count = count + 1
-	statement, err := db.Prepare(`INSERT INTO todo(id, task, status) values(?,?,?)`)
+
+	entries := make([]entry, count)
+
+	rows, err = db.Query("SELECT * FROM todo")
 	checkErr(err)
-	statement.Exec(count, task, 0)
+	var id int
+	var task string
+	var status bool
+	index := 0
+	for rows.Next() {
+		rows.Scan(&id, &task, &status)
+		entries[index] = entry{id, task, status}
+		index++
+	}
+	rows.Close()
+	return entries
+}
+
+func showTodo(db *sql.DB) {
+  entries := getEntries(db)
+	for i := 0; i < len(entries); i++ {
+		fmt.Println(strconv.Itoa(entries[i].id) + ", " + entries[i].task + ", " + strconv.FormatBool(entries[i].status))
+	}
+}
+
+func addTodo(db *sql.DB, task string) {
+  entries := getEntries(db)
+	isnew := true
+	for i := 0; i < len(entries); i++ {
+    if entries[i].task == task {
+      isnew = false
+    }
+
+	}
+	if isnew {
+		statement, err := db.Prepare(`INSERT INTO todo(id, task, status) values(?,?,?)`)
+		checkErr(err)
+		statement.Exec(len(entries)+1, task, 0)
+	}
 }
 
 func createDatabase() {
