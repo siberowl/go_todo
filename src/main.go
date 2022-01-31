@@ -99,6 +99,21 @@ func addTodo(db *sql.DB, task string) {
 	}
 }
 
+func delTodo(db *sql.DB, id int) {
+	entries := getEntries(db)
+	exists := false
+	for i := 0; i < len(entries); i++ {
+		if entries[i].id == id {
+			exists = true
+		}
+	}
+	if exists {
+		statement, err := db.Prepare(`DELETE FROM todo WHERE id=` + strconv.Itoa(id))
+		checkErr(err)
+		statement.Exec()
+	}
+}
+
 func createDatabase() {
 	fmt.Println("Creating database...")
 	file, err := os.Create("todo.db")
