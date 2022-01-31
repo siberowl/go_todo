@@ -24,10 +24,9 @@ func main() {
 		createTable(db)
 	}
 
-	addTodo(db, "test")
-
 	addPtr := flag.String("add", "", "Todo to add")
 	removePtr := flag.Int("remove", 0, "Todo ID to remove")
+	showPtr := flag.Bool("show", false, "Flag to show todo list")
 
 	flag.Parse()
 
