@@ -25,7 +25,7 @@ func main() {
 	}
 
 	addPtr := flag.String("add", "", "Todo to add")
-	removePtr := flag.Int("remove", 0, "Todo ID to remove")
+	delPtr := flag.Int("del", 0, "Todo ID to remove")
 	showPtr := flag.Bool("show", false, "Flag to show todo list")
 
 	flag.Parse()
@@ -37,8 +37,8 @@ func main() {
 	if *addPtr != "" {
 		addTodo(db, *addPtr)
 	}
-	if *removePtr != 0 {
-
+	if *delPtr != 0 {
+		delTodo(db, *delPtr)
 	}
 	if *showPtr {
 		showTodo(db)
