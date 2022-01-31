@@ -46,7 +46,7 @@ func main() {
 func showTodo(db *sql.DB) {
 	// query
 	rows, err := db.Query("SELECT * FROM todo")
-  checkErr(err)
+	checkErr(err)
 	var id int
 	var task string
 	var status bool
@@ -66,9 +66,9 @@ func addTodo(db *sql.DB, task string) {
 		rows.Scan(&count)
 	}
 	rows.Close()
-  count = count + 1
+	count = count + 1
 	statement, err := db.Prepare(`INSERT INTO todo(id, task, status) values(?,?,?)`)
-  checkErr(err)
+	checkErr(err)
 	statement.Exec(count, task, 0)
 }
 
@@ -88,7 +88,7 @@ func createTable(db *sql.DB) {
     "task" VARCHAR(255),
     "status" BOOL
   )`)
-  checkErr(err)
+	checkErr(err)
 	createStmt.Exec()
 }
 
