@@ -6,43 +6,25 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
 
-	createDatabase()
-
-	db, err := sql.Open("sqlite3", "./todo.db")
-	checkErr(err)
-	createStmt, err := db.Prepare(`CREATE TABLE todo(
-    "id" INT,
-    "task" VARCHAR(255),
-    "done" BOOL
-  )`)
-	createStmt.Exec()
-	checkErr(err)
-	statement, err := db.Prepare("INSERT INTO todo(id, task, done) values(?,?,?)")
-	checkErr(err)
-	statement.Exec(1, "test task", false)
-
-	// query
-	rows, err := db.Query("SELECT * FROM todo")
-	checkErr(err)
-	var id int
-	var task string
-	var done bool
-
-	for rows.Next() {
-		err = rows.Scan(&id, &task, &done)
-		checkErr(err)
-		fmt.Println(id)
-		fmt.Println(task)
-		fmt.Println(done)
+	if _, err := os.Stat("todo.db"); err != nil {
+		createDatabase()
 	}
 
-	rows.Close()
+	db, _ := sql.Open("sqlite3", "./todo.db")
+
+	_, err := db.Query("SELECT * FROM todo")
+	if err != nil {
+		createTable(db)
+	}
+
+	addTodo(db, "test")
 
 	addPtr := flag.String("add", "", "Todo to add")
 	removePtr := flag.Int("remove", 0, "Todo ID to remove")
