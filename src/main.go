@@ -21,3 +21,7 @@ func main() {
 
   }
 }
+
+func addTodo(todo string){
+
+}
