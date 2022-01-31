@@ -79,7 +79,7 @@ func getEntries(db *sql.DB) []entry {
 func showTodo(db *sql.DB) {
 	entries := getEntries(db)
 	for i := 0; i < len(entries); i++ {
-		fmt.Println(strconv.Itoa(entries[i].id) + ", " + entries[i].task + ", " + strconv.FormatBool(entries[i].status))
+		fmt.Println("["+strconv.Itoa(entries[i].id) + "] " + entries[i].task + " | " + strconv.FormatBool(entries[i].status))
 	}
 }
 
