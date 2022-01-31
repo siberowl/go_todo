@@ -73,6 +73,17 @@ func createDatabase() {
 	file.Close()
 }
 
+func createTable(db *sql.DB) {
+	fmt.Println("Creating table...")
+	createStmt, err := db.Prepare(`CREATE TABLE todo(
+    "id" INT,
+    "task" VARCHAR(255),
+    "status" BOOL
+  )`)
+  checkErr(err)
+	createStmt.Exec()
+}
+
 func checkErr(err error) {
 	if err != nil {
 		panic(err)
