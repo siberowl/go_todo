@@ -5,23 +5,23 @@ import "flag"
 
 func main() {
 
-  addPtr := flag.String("add", "", "Todo to add")
-  removePtr := flag.Int("remove", 0, "Todo ID to remove")
+	addPtr := flag.String("add", "", "Todo to add")
+	removePtr := flag.Int("remove", 0, "Todo ID to remove")
 
-  flag.Parse()
+	flag.Parse()
 
-  if flag.NFlag() == 0 {
-    flag.PrintDefaults()
-  }
+	if flag.NFlag() == 0 {
+		flag.PrintDefaults()
+	}
 
-  fmt.Println("add:", *addPtr)
-  fmt.Println("remove:", *removePtr)
+	fmt.Println("add:", *addPtr)
+	fmt.Println("remove:", *removePtr)
 
-  if *addPtr != "" {
+	if *addPtr != "" {
 
-  }
+	}
 }
 
-func addTodo(todo string){
+func addTodo(todo string) {
 
 }
