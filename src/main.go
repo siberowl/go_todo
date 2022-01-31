@@ -61,11 +61,37 @@ func main() {
 	}
 }
 
-func addTodo(todo string) {
+func showTodo(db *sql.DB) {
+	// query
+	rows, err := db.Query("SELECT * FROM todo")
+  checkErr(err)
+	var id int
+	var task string
+	var status bool
+	fmt.Println("id, task, status")
+	for rows.Next() {
+		rows.Scan(&id, &task, &status)
+		fmt.Println(string(id) + ", " + task + ", " + strconv.FormatBool(status))
+	}
+	rows.Close()
+}
 
+func addTodo(db *sql.DB, task string) {
+	rows, err := db.Query(`SELECT COUNT(*) FROM todo`)
+	checkErr(err)
+	var count int
+	for rows.Next() {
+		rows.Scan(&count)
+	}
+	rows.Close()
+  count = count + 1
+	statement, err := db.Prepare(`INSERT INTO todo(id, task, status) values(?,?,?)`)
+  checkErr(err)
+	statement.Exec(count, task, 0)
 }
 
 func createDatabase() {
+	fmt.Println("Creating database...")
 	file, err := os.Create("todo.db")
 	if err != nil {
 		log.Fatal(err.Error())
