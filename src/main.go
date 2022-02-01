@@ -26,6 +26,7 @@ func main() {
 
 	addPtr := flag.String("add", "", "Todo to add")
 	delPtr := flag.Int("del", 0, "Todo ID to remove")
+	donePtr := flag.Int("done", 0, "Todo ID to mark done")
 	showPtr := flag.Bool("show", false, "Flag to show todo list")
 
 	flag.Parse()
@@ -39,6 +40,9 @@ func main() {
 	}
 	if *delPtr != 0 {
 		delTodo(db, *delPtr)
+	}
+	if *donePtr != 0 {
+		doneTodo(db, *donePtr)
 	}
 	if *showPtr {
 		showTodo(db)
@@ -111,6 +115,27 @@ func delTodo(db *sql.DB, id int) {
 		statement, err := db.Prepare(`DELETE FROM todo WHERE id=` + strconv.Itoa(id))
 		checkErr(err)
 		statement.Exec()
+		showTodo(db)
+	} else {
+		fmt.Println("ID does not exist")
+	}
+}
+
+func doneTodo(db *sql.DB, id int) {
+	entries := getEntries(db)
+	exists := false
+	for i := 0; i < len(entries); i++ {
+		if entries[i].id == id {
+			exists = true
+		}
+	}
+	if exists {
+		statement, err := db.Prepare(`UPDATE todo SET status = true WHERE id=` + strconv.Itoa(id))
+		checkErr(err)
+		statement.Exec()
+		showTodo(db)
+	} else {
+		fmt.Println("ID does not exist")
 	}
 }
 
