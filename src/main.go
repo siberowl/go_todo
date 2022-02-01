@@ -82,8 +82,18 @@ func getEntries(db *sql.DB) []entry {
 
 func showTodo(db *sql.DB) {
 	entries := getEntries(db)
+	fmt.Println("Todo:")
 	for i := 0; i < len(entries); i++ {
-		fmt.Println("["+strconv.Itoa(entries[i].id) + "] " + entries[i].task + " | " + strconv.FormatBool(entries[i].status))
+		if !entries[i].status {
+			fmt.Println("[" + strconv.Itoa(entries[i].id) + "] " + entries[i].task)
+		}
+	}
+	fmt.Println("")
+	fmt.Println("Finished:")
+	for i := 0; i < len(entries); i++ {
+		if entries[i].status {
+			fmt.Println("[" + strconv.Itoa(entries[i].id) + "] " + entries[i].task)
+		}
 	}
 }
 
@@ -100,6 +110,9 @@ func addTodo(db *sql.DB, task string) {
 		statement, err := db.Prepare(`INSERT INTO todo(id, task, status) values(?,?,?)`)
 		checkErr(err)
 		statement.Exec(len(entries)+1, task, 0)
+		showTodo(db)
+	} else {
+		fmt.Println("Already exists")
 	}
 }
 
